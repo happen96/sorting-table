@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document Filter</title>
+
+    <style>
+        .container {
+            max-width: 760px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        th, td, p, input {
+            font:14px Verdana;
+        }
+        table, th, td
+        {
+            border: solid 1px #DDD;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+        }
+        th {
+            font-weight: bold;
+        }
+        table {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1em;
+            background: #ddd;
+            border-bottom: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="options">
+        <select id="selectBox" onchange="sortDate();">
+            <option value="1">По дню</option>
+            <option value="2">По месяцу</option>
+        </select>
+    </div>
+    <p id="showData"></p>
+</div>
+
+
+<script>
+    var dataTable = [{"firstname":"Виктор","lastname":"Петров","email":"test@test.com","phonenumber":"77777777777","birthday_contact":"","company":"Company 1"},{"firstname":"Вася","lastname":"Пупкин","email":"test@test.com","phonenumber":"333333333333","birthday_contact":"2004-10-20","company":"Company 2"},{"firstname":"Дима","lastname":"Коршунов","email":"test@test.com","phonenumber":"22222222222","birthday_contact":"1991-07-16","company":"Company 3"},{"firstname":"Сан","lastname":"Саныч","email":"test@test.com","phonenumber":"33333333333","birthday_contact":"1998-07-03","company":"Company 4"},{"firstname":"Виктор","lastname":"Петров","email":"test@test.com","phonenumber":"77777777777","birthday_contact":"1981-05-03","company":"Company 1"},{"firstname":"Вася","lastname":"Пупкин","email":"test@test.com","phonenumber":"333333333333","birthday_contact":"2004-10-20","company":"Company 2"},{"firstname":"Дима","lastname":"Коршунов","email":"test@test.com","phonenumber":"22222222222","birthday_contact":"1991-06-16","company":"Company 3"},{"firstname":"Сан","lastname":"Саныч","email":"test@test.com","phonenumber":"33333333333","birthday_contact":"1998-01-03","company":"Company 4"}];
+    CreateTableFromJSON(dataTable);
+
+    function CreateTableFromJSON(dataTable) {
+        var col = [];
+        for (var i = 0; i < dataTable.length; i++) {
+            for (var key in dataTable[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
+
+        var table = document.createElement("table");
+
+        var tr = table.insertRow(-1);
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+        for (var i = 0; i < dataTable.length; i++) {
+
+            tr = table.insertRow(-1);
+
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+                if (dataTable[i][col[j]] !== ''){
+                    tabCell.innerHTML = dataTable[i][col[j]];
+                } else {
+                    tabCell.innerHTML = 'Secret Data';
+                    tabCell.style.color = 'red';
+                }
+
+            }
+        }
+
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+    }
+
+    function sortDate() {
+        var selectBox = document.getElementById("selectBox");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        if (selectedValue == '1') {
+            const sortedActivities = dataTable.slice().sort((a, b) => convertToDays(a.birthday_contact) - convertToDays(b.birthday_contact));
+            CreateTableFromJSON(sortedActivities);
+        } else {
+            const sortedActivities = dataTable.slice().sort((a, b) => convertToMonth(a.birthday_contact) - convertToMonth(b.birthday_contact));
+            CreateTableFromJSON(sortedActivities);
+        }
+
+    }
+
+    function convertToDays(data) {
+        var newData = data.split("-");
+        return +(newData[2]);
+    }
+
+    function convertToMonth(data) {
+        var newData = data.split("-");
+        return +(newData[1]);
+    }
+
+
+</script>
+</body>
+</html>
